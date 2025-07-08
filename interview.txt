@@ -1,0 +1,49 @@
+import streamlit as st
+import google.generativeai as genai
+import os
+genai.configure(api_key="AIzaSyCQaFl1mfsNSIrYUzcltRbYybVgqefDYmw")
+
+# Initialize Gemini model
+model = genai.GenerativeModel('gemini-2.0-flash')
+
+st.title("🎤 AI Interview Practice Buddy")
+st.write("Choose a job role and practice with simulated questions. Get feedback on your answers.")
+
+# Step 1: Select Job Role
+job_role = st.selectbox("Select your job role", ["Data Scientist", "Frontend Developer", "AI Engineer", "Digital Marketer", "Product Manager"])
+
+# Step 2: Ask interview question
+if st.button("Ask me a question"):
+    with st.spinner("Thinking..."):
+        prompt = f"Ask a realistic interview question for a {job_role} role. Be concise but professional."
+        response = model.generate_content(prompt)
+        st.session_state.question = response.text
+    st.success("Here's your question:")
+
+# Display question
+if "question" in st.session_state:
+    st.markdown(f"**Q: {st.session_state.question}**")
+
+    # Step 3: User types an answer
+    user_answer = st.text_area("Your Answer", height=200)
+
+    # Step 4: Get feedback
+    import requests
+
+# ... existing code ...
+
+if st.button("Send to n8n and Get Feedback"):
+    payload = {
+        "job_role": job_role,
+        "question": st.session_state.question,
+        "answer": user_answer
+    }
+
+    with st.spinner("Sending to n8n..."):
+        try:
+            response = requests.post("https://inn-n8n.app.n8n.cloud/webhook-test/ai-interview", json=payload)
+            result = response.json()
+            st.markdown("### 💡 Feedback from Gemini via n8n")
+            st.write(result.get("feedback", "No feedback returned."))
+        except Exception as e:
+            st.error(f"Error: {e}")

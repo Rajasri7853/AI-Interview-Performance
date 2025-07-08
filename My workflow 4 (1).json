@@ -1,0 +1,162 @@
+{
+  "name": "My workflow 4",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ai-interview",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -360,
+        -100
+      ],
+      "id": "2e4aaaa5-cad1-4e09-a0f7-65397f9ea605",
+      "name": "Webhook",
+      "webhookId": "e9760bb9-4f41-4b69-afcc-bc93db655ce2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8566c49d-a6e5-4f03-80f1-c51eade7a1bd",
+              "name": "feedback",
+              "value": "=Your answer for the {{ $json.body.job_role }} role looks promising! Try using the STAR (Situation, Task, Action, Result) method for better structure.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -140,
+        -100
+      ],
+      "id": "4383ae43-9172-4237-8fda-7f97c075e4bd",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "sendTo": "rajasri.r.cse.2023@snsce.ac.in",
+        "subject": "AI Interview Performance",
+        "emailType": "text",
+        "message": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        440,
+        -100
+      ],
+      "id": "6605f888-9f68-4c26-acaa-2d037f6d012e",
+      "name": "Send a message",
+      "webhookId": "2f183f60-99fb-40c1-ba42-b97ea5740460",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "P4pZ1lXJl5XeK4M5",
+          "name": "Gmail account 6"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.feedback }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        80,
+        -100
+      ],
+      "id": "1f0d8cfa-bc09-4c98-9857-76a996496b59",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        80,
+        80
+      ],
+      "id": "a47c14e2-2bca-4395-b650-f5f2981c4195",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "z3ezg2yOHFxIU6n0",
+          "name": "Google Gemini(PaLM) Api account 6"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "270fa8c6-b221-469f-bd7c-eee8fd6eaca2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d2059035bcad15d44b28e07931e92f9b05e079e988fdfbdc0634a9a7129d6045"
+  },
+  "id": "SZIkpVwgDWCHINje",
+  "tags": []
+}
